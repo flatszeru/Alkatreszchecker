@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+import javafx.scene.image.Image;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -417,6 +418,8 @@ public class FileProcessor {
     private void sortFileLists() {
 
     }
+
+
 
 
 
