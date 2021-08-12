@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -38,11 +40,13 @@ public class Controller implements Initializable {
     private double xOffset=0;
     private double yOffset=0;
 
-    private int pdfButtonState;
-    private int xlsButtonState;
-    private int txtButtonState;
-    private int helpButtonState;
-    // Button States:  1. fedalut 2. green 3. grey
+    private String pdfButtonState;
+    private String xlsButtonState;
+    private String txtButtonState;
+    private String helpButtonState;
+
+    @FXML
+    ImageView iv_reset;
 
     @FXML
     ImageView iv_pdf;
@@ -65,6 +69,12 @@ public class Controller implements Initializable {
     @FXML
     private Pane titlePane;
 
+    @FXML
+    private Label firstFileLabel;
+
+    @FXML
+    private Label secondFileLabel;
+
     Stage stage;
 
     @FXML
@@ -83,7 +93,6 @@ public class Controller implements Initializable {
         public double x,y;
     }
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setDefaultState();
@@ -94,6 +103,8 @@ public class Controller implements Initializable {
     }
 
     public void setDefaultState() {
+        iv_reset.setImage(new Image(getClass().getResource("/sample/Assets/reset.png").toExternalForm()));
+        iv_reset.setDisable(false);
         iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdf.png").toExternalForm()));
         iv_pdf.setDisable(false);
         iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xls.png").toExternalForm()));
@@ -102,12 +113,12 @@ public class Controller implements Initializable {
         iv_txt.setDisable(false);
         iv_help.setImage(new Image(getClass().getResource("/sample/Assets/help.png").toExternalForm()));
         iv_help.setDisable(false);
-        pdfButtonState = 1;
-        xlsButtonState = 1;
-        txtButtonState = 1;
-        helpButtonState = 1;
+        xlsButtonState = "DEFAULT";
+        txtButtonState = "DEFAULT";
+        helpButtonState = "DEFAULT";
+        pdfButtonState = "DEFAULT";
 
-        // Button States:  1. fedalut 2. green 3. grey
+        // Button States:  DEFAULT,ON,DISABLED
     }
 
     public void setParentInController(Parent root) {
@@ -119,131 +130,198 @@ public class Controller implements Initializable {
     }
 
     public void pdfButtonClicked(MouseEvent event) {
-
-        if (pdfButtonState!=3) {
-
+        if (pdfButtonState!="DISABLED") {
             if(event.getButton().equals(MouseButton.PRIMARY)) {
-                System.out.println("Working Directory = " + System.getProperty("user.dir"));
-                File file = new File("/Assets/pdfGreen.png");
-                System.out.println(file);
+                File chosedFile=null;
                 FileChooser fc = new FileChooser();
-                fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("pdf files","*.pdf"));
-                fc.setTitle("pdf fajlok kivalasztasa");
-                List<File> list = f.updatePdfFileListsByButton(fc.showOpenMultipleDialog(stage));
-                if (f.isPdfFileListEmpty()==true) {
-                    iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdf.png").toExternalForm()));
-                    turnOnXlsButton();
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("pdf files","*.pdf"));
+                fc.setTitle("pdf fajl kivalasztasa");
+                chosedFile = fc.showOpenDialog(stage);
 
+                if (chosedFile!=null) {
+                    f.addPdf(chosedFile);
+                    if (f.pdfFile!=null) {
+                        if (f.fileType=="PDF") {
+                            pdfButtonToON();
+                            xlsButtonToDISABLE();
+                            firstFileLabel.setText(chosedFile.getPath());
+                        }
+                        else {
+                            if (firstFileLabel.getText()!="") {
+                                pdfButtonToON();
+                            }
+                            else {
+                                pdfButtonToDEFAULT();
+                                xlsButtonToDEFAULT();
+                            }
+                        }
+                    }
+                    else  {
+                        pdfButtonToDEFAULT();
+                        xlsButtonToDEFAULT();
+                        firstFileLabel.setText("");
+                    }
                 }
-                else if (f.isPdfFileListEmpty() != true) {
-                    iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdfGreen.png").toExternalForm()));
-                    turnOfXlsButton();
-                }
-                f.getPdfId();
-
-                if (list !=null) {
-                    p.setFile(list.get(0));
-                    p.extractText();
-                    p.setPdfName();
-                }
-
             }
 
             if(event.getButton().equals(MouseButton.SECONDARY)) {
-                f.clearPdfList();
-                iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdf.png").toExternalForm()));
-                turnOnXlsButton();
+                f.pdfFile=null;
+                pdfButtonToDEFAULT();
+                xlsButtonToDEFAULT();
+                firstFileLabel.setText("");
             }
         }
     }
-
-
 
     public void xlsButtonClicked(MouseEvent event) {
-        if (xlsButtonState!=3) {
+        if (xlsButtonState!="DISABLED") {
             if(event.getButton().equals(MouseButton.PRIMARY)) {
+                File chosedFile=null;
                 FileChooser fc = new FileChooser();
-                fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("xlsx files","*.xlsx"));
-                fc.setTitle("xlsx fajlok kivalasztasa");
-                f.updateXlsFileListsByButton(fc.showOpenMultipleDialog(stage));
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("xlsx files","*.xlsx"));
+                fc.setTitle("xlsx fajl kivalasztasa");
+                chosedFile = fc.showOpenDialog(stage);
 
-                if (f.isXlsFileListEmpty()==true) {
-                    System.out.println("true");
-                    iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xls.png").toExternalForm()));
-                    xlsButtonState=1;
-                }
-
-                else if (f.isXlsFileListEmpty() != true) {
-                    System.out.println("false");
-                    iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xlsGreen.png").toExternalForm()));
-                    xlsButtonState=2;
-                    turnOfPdfButton();
+                if (chosedFile!=null) {
+                    f.addXls(chosedFile);
+                    if (f.xlsFile!=null) {
+                        if (f.fileType=="XLSX") {
+                            xlsButtonToON();
+                            pdfButtonToDISABLE();
+                            firstFileLabel.setText(chosedFile.getPath());
+                        }
+                        else {
+                            if (firstFileLabel.getText()!="") {
+                                xlsButtonToON();
+                            }
+                            else {
+                                xlsButtonToDEFAULT();
+                                pdfButtonToDEFAULT();
+                            }
+                        }
+                    }
+                    else  {
+                        xlsButtonToDEFAULT();
+                        pdfButtonToDEFAULT();
+                        firstFileLabel.setText("");
+                    }
                 }
             }
 
-            if (event.getButton().equals(MouseButton.SECONDARY)) {
-                f.clearXlsList();
-                iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xls.png").toExternalForm()));
-                xlsButtonState=1;
-                turnOnPdfButton();
-
+            if(event.getButton().equals(MouseButton.SECONDARY)) {
+                f.xlsFile=null;
+                xlsButtonToDEFAULT();
+                pdfButtonToDEFAULT();
+                firstFileLabel.setText("");
             }
-            f.getXlsId();
         }
-
     }
 
-    private void turnOfPdfButton() {
-        pdfButtonState=3;
+    public void resetButtonClicked(MouseEvent event) {
+        f.xlsFile=null;
+        f.pdfFile=null;
+        f.txtFile=null;
+        f.fileType="UNKNOWN";
+        pdfButtonToDEFAULT();
+        xlsButtonToDEFAULT();
+        txtButtonToDEFAULT();
+        firstFileLabel.setText("");
+        secondFileLabel.setText("");
+    }
+
+    private void pdfButtonToDISABLE() {
+        pdfButtonState="DISABLED";
         iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdfGrey.png").toExternalForm()));
         iv_pdf.setDisable(true);
     }
 
-    private void turnOnPdfButton() {
-        pdfButtonState=1;
+    private void pdfButtonToDEFAULT() {
+        pdfButtonState="DEFAULT";
         iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdf.png").toExternalForm()));
         iv_pdf.setDisable(false);
     }
 
-
-
-    private void turnOnXlsButton() {
-        xlsButtonState=1;
-        iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xls.png").toExternalForm()));
-        iv_xls.setDisable(false);
+    private void pdfButtonToON() {
+        pdfButtonState="ON";
+        iv_pdf.setImage(new Image(getClass().getResource("/sample/Assets/pdfGreen.png").toExternalForm()));
+        iv_pdf.setDisable(false);
     }
 
-    private void turnOfXlsButton() {
-        xlsButtonState=3;
+    private void xlsButtonToDISABLE() {
+        xlsButtonState="DISABLED";
         iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xlsGrey.png").toExternalForm()));
         iv_xls.setDisable(true);
     }
 
+    private void xlsButtonToDEFAULT() {
+        xlsButtonState="DEFAULT";
+        iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xls.png").toExternalForm()));
+        iv_xls.setDisable(false);
+    }
+
+    private void xlsButtonToON() {
+        xlsButtonState="ON";
+        iv_xls.setImage(new Image(getClass().getResource("/sample/Assets/xlsGreen.png").toExternalForm()));
+        iv_xls.setDisable(false);
+    }
+
+    private void txtButtonToDISABLE() {
+        txtButtonState="DISABLED";
+        iv_txt.setImage(new Image(getClass().getResource("/sample/Assets/txtGrey.png").toExternalForm()));
+        iv_txt.setDisable(true);
+    }
+
+    private void txtButtonToDEFAULT() {
+        txtButtonState="DEFAULT";
+        iv_txt.setImage(new Image(getClass().getResource("/sample/Assets/txt.png").toExternalForm()));
+        iv_txt.setDisable(false);
+    }
+
+    private void txtButtonToON() {
+        txtButtonState="ON";
+        iv_txt.setImage(new Image(getClass().getResource("/sample/Assets/txtGreen.png").toExternalForm()));
+        iv_txt.setDisable(false);
+    }
+
     public void txtButtonClicked(MouseEvent event) {
+        if (txtButtonState!="DISABLED") {
+            if(event.getButton().equals(MouseButton.PRIMARY)) {
+                File chosedFile=null;
+                FileChooser fc = new FileChooser();
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("txt files","*.txt"));
+                fc.setTitle("txt fajl kivalasztasa");
+                chosedFile = fc.showOpenDialog(stage);
 
-        if (event.getButton().equals(MouseButton.PRIMARY)) {
-            FileChooser fc = new FileChooser();
-            fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("txt files","*.txt"));
-            fc.setTitle("txt fajlok kivalasztasa");
-            f.updateTxtFileListsByButton(fc.showOpenMultipleDialog(stage));
-
-            if (f.isTxtFileListEmpty()==true) {
-                iv_txt.setImage(new Image(getClass().getResource("/sample/Assets/txt.png").toExternalForm()));
-                txtButtonState=1;
+                if (chosedFile!=null) {
+                    f.addTxt(chosedFile);
+                    if (f.txtFile!=null) {
+                        if (f.fileType=="TXT") {
+                            txtButtonToON();
+                            secondFileLabel.setText(chosedFile.getPath());
+                        }
+                        else {
+                            if (secondFileLabel.getText()!="") {
+                                txtButtonToON();
+                            }
+                            else {
+                                txtButtonToDEFAULT();
+                            }
+                        }
+                    }
+                    else  {
+                        txtButtonToDEFAULT();
+                        secondFileLabel.setText("");
+                    }
+                }
             }
 
-            else if (f.isTxtFileListEmpty() != true) {
-                iv_txt.setImage(new Image(getClass().getResource("/sample/Assets/txtGreen.png").toExternalForm()));
-                txtButtonState=2;
+            if(event.getButton().equals(MouseButton.SECONDARY)) {
+                f.txtFile=null;
+                txtButtonToDEFAULT();
+                secondFileLabel.setText("");
             }
         }
 
-        if (event.getButton().equals(MouseButton.SECONDARY)) {
-            f.clearXlsList();
-            iv_txt.setImage(new Image(getClass().getResource("/sample/Assets/txt.png").toExternalForm()));
-        }
-
-        f.getTxtId();
 
 
 
@@ -251,10 +329,53 @@ public class Controller implements Initializable {
 
     }
 
-    public void onDragDraggedHereImage(DragEvent event) {
-        f.setDragFileList(event.getDragboard().getFiles());
-        f.updateFileLists();
+    public static void showInformationMessage(String title, String message) {
 
+        ButtonType ok = new ButtonType("OK!", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,"", ok );
+        alert.setTitle(title);
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+
+    public void onDragDraggedHereImage(DragEvent event) {
+        List<File> tempFileList = event.getDragboard().getFiles();
+        if (tempFileList.size()>1) {
+            showInformationMessage("Figyelmeztetés!","Egyszerre csak egy fájlt húzz be. Több fájl esetén csak az elsőt fogom használni.");
+        }
+
+        if (pdfButtonState!="DISABLED") {
+            File draggedFile=null;
+            draggedFile = tempFileList.get(0);
+                if (draggedFile!=null) {
+                    f.addPdf(draggedFile);
+                    if (f.pdfFile!=null) {
+                        if (f.fileType=="PDF") {
+                            pdfButtonToON();
+                            xlsButtonToDISABLE();
+                            firstFileLabel.setText(draggedFile.getPath());
+                        }
+                        else {
+                            if (firstFileLabel.getText()!="") {
+                                pdfButtonToON();
+                            }
+                            else {
+                                pdfButtonToDEFAULT();
+                                xlsButtonToDEFAULT();
+                                showInformationMessage("Figyelmeztetés!","Nem kompatibilis pdf fájl.");
+                            }
+                        }
+                    }
+                    else  {
+                        pdfButtonToDEFAULT();
+                        xlsButtonToDEFAULT();
+                        firstFileLabel.setText("");
+                    }
+                }
+            }
+        else if(xlsButtonState!="DISABLED") {
+
+        }
     }
 
     public void onDragUpdateButtonStates(){

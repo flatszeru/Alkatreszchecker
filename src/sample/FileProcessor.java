@@ -13,15 +13,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-import javafx.scene.image.Image;
-import org.apache.commons.lang3.StringUtils;
+import javafx.scene.control.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -29,20 +27,135 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class FileProcessor {
 
-
-
-
-    //Buttonstate : green (valid) = true  and  white = false (non valid/empty)
-
-    //   <Image url="@../sample/Assets/pdf.png" />
-
     private List<File> pdfFileList = new ArrayList<>();
     private List<File> xlsFileList = new ArrayList<>();
     private List<File> txtFileList = new ArrayList<>();
-    private List pdfIdList = new ArrayList<>();
-    private List xlsIdList = new ArrayList<>();
+    private List<String> pdfIdList = new ArrayList<>();
+    private List<String> xlsIdList = new ArrayList<>();
     private List<String> txtIdList = new ArrayList<>();
     public List<File> dragFileList = new ArrayList<>();
+    File pdfFile;
+    File xlsFile;
+    File txtFile;
+    File droppedFile;
+    String fileType="UNKNOWN";
+
+    public String whatsThisFile(File file) {
+
+        if (isValidPdf(file)) {
+            return "PDF";
+        }
+        else if(isValidXls(file)) {
+            return "XLSX";
+        }
+        else if(isValidTxt(file)) {
+            return "TXT";
+        }
+        else {
+            return "UNKNOWN";
+        }
+    }
+
+    public void addPdf(File file) {
+        fileType = whatsThisFile(file);
+        System.out.println(fileType);
+
+        if (fileType=="PDF") {
+            System.out.println("jó eset futott le");
+            pdfFile = file;
+
+        }
+        else {
+            System.out.println("rossz eset futott le");
+            showInformationMessage("Error","Nem kompatibilis pdf fájl.");
+        }
+    }
+
+    public void addXls(File file) {
+        fileType = whatsThisFile(file);
+        System.out.println(fileType);
+
+        if (fileType=="XLSX") {
+            System.out.println("jó eset futott le");
+            xlsFile = file;
+
+        }
+        else {
+            System.out.println("rossz eset futott le");
+            showInformationMessage("Error","Nem kompatibilis xls fájl.");
+        }
+    }
+
+    public void addTxt(File file) {
+        fileType = whatsThisFile(file);
+        System.out.println(fileType);
+
+        if (fileType=="TXT") {
+            System.out.println("jó eset futott le");
+            txtFile = file;
+
+        }
+        else {
+            System.out.println("rossz eset futott le");
+            showInformationMessage("Error","Nem kompatibilis txt fájl.");
+        }
+    }
+
+    public static void showInformationMessage(String title, String message) {
+
+        ButtonType ok = new ButtonType("OK!", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,"", ok );
+        alert.setTitle(title);
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+
+    public void resetFileLists() {
+        pdfFile=null;
+        xlsFile=null;
+        txtFile=null;
+    }
+
+    public void resetPdfFile() {
+        pdfFile=null;
+    }
+
+    public void resetXlsFile() {
+        xlsFile=null;
+    }
+
+    public void resetTxtFile() {
+        txtFile=null;
+    }
+
+    public void setPdfFileFromDragndrop(File file) {
+        if (xlsFile!=null) {
+
+            pdfFile = droppedFile;
+        }
+        System.out.println("pdf file = "+pdfFile);
+    }
+
+    public void setXlsFileFromDragndrop(File droppedFile) {
+        if (pdfFile!=null) {
+            xlsFile = droppedFile;
+        }
+        System.out.println("xls file = "+xlsFile);
+    }
+
+    public void setTxtFileFromDragndrop(File droppedFile) {
+        txtFile = droppedFile;
+    }
+
+    public void setXlsFileFromDragndrop() {
+
+    }
+
+    public void setTxtFileFromDragndrop() {
+
+    }
+
+
 
     public void addFilesToPdfList(List<File> files) {
 
@@ -125,7 +238,19 @@ public class FileProcessor {
                 }
             }
         }
+        System.out.println(pdfFileList);
+        System.out.println(xlsFileList);
+        System.out.println(txtFileList);
         clearDragNDropFilelist();
+    }
+
+    public void createPairedFileList() {
+        List tempList = new ArrayList();
+
+    }
+
+    public void clearPairedFileList() {
+
     }
 
     public void clearXlsList() {
@@ -215,11 +340,12 @@ public class FileProcessor {
                        String tempPdf = stripper.getText(doc);
                        if (tempPdf.contains("Artikel:")) {
                            doc.close();
-                           
+                           System.out.println("isValidPdf: "+"valid");
                            return true;
                        }
                        else {
                            doc.close();
+                           System.out.println("isValidPdf: "+"false");
                            return false;
                        }                   
                    }           
