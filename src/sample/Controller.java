@@ -3,10 +3,7 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -22,6 +19,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 
+import javax.swing.text.TableView;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -31,6 +29,7 @@ import java.util.ResourceBundle;
 import static com.sun.javafx.scene.control.skin.Utils.getResource;
 
 public class Controller implements Initializable {
+
 
     Parent root;
     FileProcessor f = new FileProcessor();
@@ -74,6 +73,13 @@ public class Controller implements Initializable {
 
     @FXML
     private Label secondFileLabel;
+
+    @FXML
+    private TableView table1;
+
+
+
+
 
     Stage stage;
 

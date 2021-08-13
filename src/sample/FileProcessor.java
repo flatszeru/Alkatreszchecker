@@ -376,7 +376,8 @@ public class FileProcessor {
             String tempString="";
             while ((tempString=br.readLine()) != null) {
                 if(tempString.contains("[Content_Types].xml")) {
-                    try {  
+                    try {
+                        //readXlsCell();
                         XSSFWorkbook wb = new XSSFWorkbook(fis);
                         XSSFSheet sheet = (XSSFSheet) wb.getSheetAt(0);
                         Row row = sheet.getRow(0);
@@ -410,7 +411,7 @@ public class FileProcessor {
         }
             return false;
         }
-    
+
     private boolean isValidTxt(File file) {
                
         FileInputStream fis;
@@ -442,6 +443,10 @@ public class FileProcessor {
             return false;
         }
         return resultBool;
+    }
+
+    public void fillNoColumnByData(List list) {
+
     }
 
     public void getPdfId() {
