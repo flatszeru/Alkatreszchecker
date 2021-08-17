@@ -30,10 +30,27 @@ public class FileProcessor {
     private List<File> pdfFileList = new ArrayList<>();
     private List<File> xlsFileList = new ArrayList<>();
     private List<File> txtFileList = new ArrayList<>();
+
+    private List<String> firstNo = new ArrayList<>();
+    private List<String> firstRajzszam = new ArrayList<>();
+    private List<String> firstDb = new ArrayList<>();
+    private List<String> firstMertekegyseg = new ArrayList<>();
+    private List<String> secondNo = new ArrayList<>();
+    private List<String> secondRajzszam = new ArrayList<>();
+    private List<String> secondDb = new ArrayList<>();
+    private List<String> secondMertekegyseg = new ArrayList<>();
+    private List<String> status = new ArrayList<>();
+    private List<String> info = new ArrayList<>();
+    public List<String> tempList = new ArrayList<>();
+
     private List<String> pdfIdList = new ArrayList<>();
     private List<String> xlsIdList = new ArrayList<>();
     private List<String> txtIdList = new ArrayList<>();
     public List<File> dragFileList = new ArrayList<>();
+
+    private List txtStartPositions = new ArrayList();
+    private List txtEndPositions = new ArrayList();
+
     File pdfFile;
     File xlsFile;
     File txtFile;
@@ -57,6 +74,7 @@ public class FileProcessor {
     }
 
     public void addPdf(File file) {
+        System.out.println("jártam itt?");
         fileType = whatsThisFile(file);
         System.out.println(fileType);
 
@@ -154,8 +172,6 @@ public class FileProcessor {
     public void setTxtFileFromDragndrop() {
 
     }
-
-
 
     public void addFilesToPdfList(List<File> files) {
 
@@ -480,7 +496,7 @@ public class FileProcessor {
         for (int i = 0; i < pdfIdList.size(); i++) {
             System.out.println(pdfIdList.get(i));
         }
-        // vvvvv
+
 
     }
 
@@ -524,9 +540,6 @@ public class FileProcessor {
                         break;
                     }
                 }
-
-
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -545,15 +558,184 @@ public class FileProcessor {
         }*/
     }
 
-
     private void sortFileLists() {
 
+    }
+
+    public void fillTableLists(File file, String type) {
+        if (type.equals("TXT")) {
+            BufferedReader br;
+            String temp="";
+            PDFTextStripper stripper;
+            tempList.clear();
+            try {
+                br = new BufferedReader(new FileReader(file));
+                fillTempList(file);
+                //checkTempList();
+                while ((temp = br.readLine()) != null) {
+                    tempList.add(temp);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        /*
+
+            else if(type.equals("XLSX")) {
+
+        }
+
+        else if(type.equals("TXT")) {
+
+        }
+
+        else if(type.equals("UNKNOWN")) {
+
+        }
+*/
     }
 
 
 
 
 
+
+
+
+
+
+
+}
+
+    public void findStartPositionInTableList() {
+        txtStartPositions.clear();
+        for (int i = 4; i < tempList.size(); i++) {
+            if(tempList.get(i).toString().contains("Jk.Rf.")) {
+                txtStartPositions.add(i+2);
+            }
+        }
+    }
+
+    public void findEndPositionInTableList() {
+        txtEndPositions.clear();
+        for (int i = 6; i < tempList.size(); i++) {
+            if(tempList.get(i).toString().contains("\f")) {
+                //System.out.println("hol tartunk? "+i+" / "+tempList.get(i));
+                txtEndPositions.add(i-4);
+            }
+        }
+    }
+
+    public void testTxtStartEndPos() {
+        System.out.println("Start-end positions");
+        System.out.println(txtStartPositions);
+        System.out.println(txtEndPositions);
+        for (int i = 0; i < txtStartPositions.size(); i++) {
+            System.out.println(tempList.get(Integer.parseInt(txtStartPositions.get(i).toString())));
+            System.out.println(tempList.get(Integer.parseInt(txtEndPositions.get(i).toString())));
+        }
+    }
+
+    public void testTempList() {
+        for (int i = 0; i < txtStartPositions.size(); i++) {
+            //System.out.println("txtStartPos = "+txtStartPositions.get(i));
+            for (int j = (Integer.parseInt(txtStartPositions.get(i).toString())); j < (Integer.parseInt(txtEndPositions.get(i).toString())); j++) {
+                System.out.println("No."+j+"  "+tempList.get(j));
+            }
+        }
+    }
+
+    private void fillTempList(File file) {
+        BufferedReader br;
+        String temp = "";
+        PDFTextStripper stripper;
+
+        try {
+            br = new BufferedReader(new FileReader(file));
+            while ((temp = br.readLine()) != null) {
+                if (temp.isEmpty()) {
+                    continue;
+                }
+                tempList.add(temp);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //System.out.println(l);
+    }
+
+    public void cleanTempList() {
+        List<String> l = new ArrayList<>();
+        findStartPositionInTableList();
+        findEndPositionInTableList();
+        testTxtStartEndPos();
+
+        for (int i = 0; i < txtStartPositions.size(); i++) {
+            //System.out.println("txtStartPos = "+txtStartPositions.get(i));
+            for (int j = (Integer.parseInt(txtStartPositions.get(i).toString())); j < (Integer.parseInt(txtEndPositions.get(i).toString())); j++) {
+                //System.out.println("J = "+j);
+                String temp = tempList.get(j);
+
+                System.out.println(""+j+"  "+temp);
+                l.add(temp);
+            }
+        }
+        tempList.clear();
+        tempList.addAll(l);
+
+    }
+
+
+
+    public void checkTempList() {
+        System.out.println("temlist length = "+tempList.size());
+        for (int i = 0; i < tempList.size(); i++) {
+            System.out.println(tempList.get(i));
+        }
+    }
+
+    public void fillTxtNoList() {
+        String temp="";
+        String substring="";
+        System.out.println(tempList.get(2));
+        for (int i = 0; i < tempList.size(); i++) {
+            temp = tempList.get(i).toString();
+            if(temp.isEmpty() || temp.contains("\f") || temp.length()<5) {
+                continue;
+            }
+            else {
+                substring = temp.substring(0,5);
+                substring = substring.replaceAll(" ","");
+                if(substring.matches("[0-9]+")) {
+                    secondNo.add(substring);
+                }
+            }
+        }
+    }
+
+    public void fillTxtRajzszamList() {
+        String temp="";
+        String substring="";
+        for (int i = 0; i < tempList.size(); i++) {
+            temp = tempList.get(i).toString();
+            if(temp.isEmpty() || temp.contains("\f") || temp.length()<58) {
+                continue;
+            }
+            else {
+                substring = temp.substring(33,58);
+                substring = substring.replaceAll(" ","");
+                System.out.println(substring);
+                if(substring.matches("[0-9]+")) {
+                    secondNo.add(substring);
+                }
+            }
+        }
+    }
 
 
 

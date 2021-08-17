@@ -347,13 +347,17 @@ public class Controller implements Initializable {
     public void onDragDraggedHereImage(DragEvent event) {
         List<File> tempFileList = event.getDragboard().getFiles();
         if (tempFileList.size()>1) {
-            showInformationMessage("Figyelmeztetés!","Egyszerre csak egy fájlt húzz be. Több fájl esetén csak az elsőt fogom használni.");
+            showInformationMessage("Figyelmeztetés!","Egyszerre csak egy fájlt húzz be. Több fájl esetén csak az első kerül felhasználásra.");
         }
+        String fileType= f.whatsThisFile(tempFileList.get(0));
 
         if (pdfButtonState!="DISABLED") {
             File draggedFile=null;
+            System.out.println("1");
             draggedFile = tempFileList.get(0);
-                if (draggedFile!=null) {
+            System.out.println("2");
+                if (draggedFile!=null && f.fileType=="PDF") {
+                    System.out.println("3");
                     f.addPdf(draggedFile);
                     if (f.pdfFile!=null) {
                         if (f.fileType=="PDF") {
@@ -361,15 +365,15 @@ public class Controller implements Initializable {
                             xlsButtonToDISABLE();
                             firstFileLabel.setText(draggedFile.getPath());
                         }
-                        else {
+                        else if (f.fileType=="UNKNOWN") {
                             if (firstFileLabel.getText()!="") {
                                 pdfButtonToON();
                             }
                             else {
                                 pdfButtonToDEFAULT();
                                 xlsButtonToDEFAULT();
-                                showInformationMessage("Figyelmeztetés!","Nem kompatibilis pdf fájl.");
                             }
+
                         }
                     }
                     else  {
@@ -379,9 +383,66 @@ public class Controller implements Initializable {
                     }
                 }
             }
-        else if(xlsButtonState!="DISABLED") {
 
+
+        else if(xlsButtonState!="DISABLED"  && fileType=="XLSX") {
+            File draggedFile=null;
+            draggedFile = tempFileList.get(0);
+            if (draggedFile!=null) {
+                f.addXls(draggedFile);
+                if (f.xlsFile!=null) {
+                    if (f.fileType=="XLSX") {
+                        xlsButtonToON();
+                        pdfButtonToDISABLE();
+                        firstFileLabel.setText(draggedFile.getPath());
+                    }
+                    else {
+                        if (firstFileLabel.getText()!="") {
+                            xlsButtonToON();
+                        }
+                        else {
+                            xlsButtonToDEFAULT();
+                            pdfButtonToDEFAULT();
+                            showInformationMessage("Figyelmeztetés!","Nem kompatibilis xlsx fájl.");
+                        }
+                    }
+                }
+                else  {
+                    xlsButtonToDEFAULT();
+                    pdfButtonToDEFAULT();
+                    firstFileLabel.setText("");
+                }
+            }
         }
+        else if(txtButtonState!="DISABLED" && fileType=="TXT") {
+            File draggedFile=null;
+            draggedFile = tempFileList.get(0);
+            if (draggedFile!=null) {
+                f.addTxt(draggedFile);
+                if (f.txtFile!=null) {
+                    if (f.fileType=="TXT") {
+                        txtButtonToON();
+                        secondFileLabel.setText(draggedFile.getPath());
+                    }
+                    else {
+                        if (secondFileLabel.getText()!="") {
+                            txtButtonToON();
+                        }
+                        else {
+                            txtButtonToDEFAULT();
+                            showInformationMessage("Figyelmeztetés!","Nem kompatibilis txt fájl.");
+                        }
+                    }
+                }
+                else  {
+                    txtButtonToDEFAULT();
+                    secondFileLabel.setText("");
+                }
+            }
+        }
+
+
+
     }
 
     public void onDragUpdateButtonStates(){
@@ -434,6 +495,25 @@ public class Controller implements Initializable {
         if (result.get() == ButtonType.OK) {
             System.exit(0);
         }
+    }
+
+    public void helpButtonClicked(MouseEvent event) {
+
+            if(event.getButton().equals(MouseButton.PRIMARY)) {
+                f.fillTableLists(new File(secondFileLabel.getText()), f.whatsThisFile(new File(secondFileLabel.getText())));
+            }
+            f.cleanTempList();
+            //f.checkTempList();
+
+
+            //f.testTxtStartEndPos();
+            //f.checkTempList();
+            //f.fillTxtNoList();
+            f.fillTxtRajzszamList();
+
+
+
+
     }
 
 

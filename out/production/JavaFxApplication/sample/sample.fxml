@@ -60,24 +60,25 @@
 
                     </image>
                 </ImageView>
-                <ImageView fx:id="iv_help" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="iv_help" fitHeight="60.0" fitWidth="60.0" onMouseClicked="#helpButtonClicked" pickOnBounds="true" preserveRatio="true">
                     <VBox.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                     </VBox.margin>
                 </ImageView>
             </children>
         </VBox>
-        <TableView layoutX="99.0" layoutY="142.0" prefHeight="450.0" prefWidth="885.0">
+        <TableView fx:id="table" layoutX="99.0" layoutY="142.0" prefHeight="450.0" prefWidth="885.0">
             <columns>
-                <TableColumn fx:id="Col_no" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" text="No" />
-                <TableColumn fx:id="col_rsz_pdf" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Rajzszám(pdf/xls)" />
+                <TableColumn fx:id="col_no" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" text="No" />
+                <TableColumn fx:id="col_rsz_pdf" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Rajzszám(pdf/xls)" />
             <TableColumn fx:id="col_db_pdf" maxWidth="75.0" minWidth="75.0" prefWidth="75.0" resizable="false" text="db(pdf/xls)" />
             <TableColumn fx:id="col_mert_pdf" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" text="Mértékegység" />
-            <TableColumn fx:id="col_rsz_txt" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Rajzszám(txt)" />
+            <TableColumn fx:id="col_rsz_txt" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" resizable="false" text="Rajzszám(txt)" />
+            <TableColumn fx:id="col_db_txt1" prefWidth="75.0" resizable="false" text="No(txt)" />
             <TableColumn fx:id="col_db_txt" prefWidth="75.0" resizable="false" text="db(txt)" />
             <TableColumn fx:id="col_mert_txt" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" text="Mértékegység" />
             <TableColumn fx:id="col_stat" maxWidth="80.0" minWidth="80.0" resizable="false" text="Status" />
-            <TableColumn fx:id="col_info" maxWidth="110.0" minWidth="110.0" prefWidth="110.0" resizable="false" text="Info" />
+            <TableColumn fx:id="col_info" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" resizable="false" text="Info" />
             </columns>
         </TableView>
         <ImageView id="dropHereImage" fx:id="dragOverImage" fitHeight="416.0" fitWidth="868.0" layoutX="105.0" layoutY="51.0" onDragDropped="#onDragDraggedHereImage" onDragOver="#onDragOverDragHereImage" opacity="0.2" pickOnBounds="true" preserveRatio="true" visible="true" AnchorPane.topAnchor="150.0">
