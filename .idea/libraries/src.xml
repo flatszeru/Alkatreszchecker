@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="src">
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/Any/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/DateTime/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/MixedContent/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/OrderMatters/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/SchemaEnum/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/Validation/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/XQueryXPath/src" />
+      <root url="jar://$PROJECT_DIR$/../../xmlbeans-bin-5.0.3-20211229.zip!/xmlbeans-5.0.3/samples/XsdConfig/src" />
+    </SOURCES>
+  </library>
+</component>

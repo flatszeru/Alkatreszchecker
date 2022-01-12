@@ -11,6 +11,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import sample.Controller.Controller;
+import sample.Model.MyTableModel;
 
 public class Main extends Application {
 
@@ -28,7 +30,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("View/sample.fxml"));
         Scene scene = new Scene(root, 1100, 600);
         scene.getStylesheets().add("sample/CSS/style.css");
         primaryStage.initStyle(StageStyle.UNDECORATED);
